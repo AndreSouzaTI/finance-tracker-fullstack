@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: finance-tracker-api
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/finance}
+    username: ${DB_USERNAME:finance}
+    password: ${DB_PASSWORD:finance}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+
+app:
+  jwt:
+    # Em produção, defina JWT_SECRET com pelo menos 32 caracteres
+    secret: ${JWT_SECRET:dev-only-secret-change-me-0123456789abcdef}
+    issuer: finance-tracker-api
+    expiration: ${JWT_EXPIRATION:8h}
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
