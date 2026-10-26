@@ -7,99 +7,99 @@
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-6DB33F?logo=springboot)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791?logo=postgresql)
 
-Aplicação **full stack** de controle financeiro pessoal: registre receitas e despesas e acompanhe saldo, gastos por categoria e evolução mensal em um dashboard. Front-end em **React + TypeScript** e API REST em **Java com Spring Boot**.
+**Full stack** personal finance app: record income and expenses and track your balance, spending by category and monthly trends on a dashboard. Front-end in **React + TypeScript** and a REST API in **Java / Spring Boot**.
 
 ![Dashboard](docs/dashboard.png)
 
-## Funcionalidades
+## Features
 
-- Cadastro e login com JWT, rotas protegidas e logout automático quando o token expira
-- Lançamentos de receitas e despesas com categoria, data e valor
-- Navegação por mês e filtro por tipo
-- Cards de receitas, despesas e saldo do mês
-- Gráfico de rosca com despesas por categoria e gráfico de barras com os últimos 6 meses
-- Todas as agregações são feitas no banco com JPQL (`SUM` + `GROUP BY`), e não em memória
-- Regra de negócio validada na API: categoria precisa ser compatível com o tipo (ex.: "Salário" só para receitas)
-- Isolamento por usuário: lançamentos de outra conta respondem 404
+- Sign-up and login with JWT, protected routes and automatic logout when the token expires
+- Income and expense entries with category, date and amount
+- Month navigation and filtering by type
+- Cards showing the month's income, expenses and balance
+- Donut chart of expenses by category and bar chart of the last 6 months
+- All aggregations run in the database with JPQL (`SUM` + `GROUP BY`), not in memory
+- Business rule enforced by the API: the category must match the entry type (e.g. "Salary" only for income)
+- Per-user isolation: another account's entries return 404
 
-## Stack
+## Tech stack
 
-| | Tecnologias |
+| | Technologies |
 |---|---|
 | **Front-end** | React 19, TypeScript, Vite, React Router, Context API, Recharts, CSS |
 | **Back-end** | Java 21, Spring Boot 4.1, Spring Security (OAuth2 Resource Server / JWT), Spring Data JPA, Hibernate, Flyway, springdoc-openapi |
-| **Banco** | PostgreSQL 17 |
-| **Testes** | Vitest + Testing Library (front), JUnit 5 + MockMvc + Testcontainers (back) |
-| **Infra** | Docker multi-stage, nginx, Docker Compose, GitHub Actions (testes, lint, build e imagens) |
+| **Database** | PostgreSQL 17 |
+| **Testing** | Vitest + Testing Library (front-end), JUnit 5 + MockMvc + Testcontainers (back-end) |
+| **Infrastructure** | Multi-stage Docker, nginx, Docker Compose, GitHub Actions (tests, lint, build and images) |
 
-## Arquitetura
+## Architecture
 
 ```mermaid
 flowchart LR
-    B[Navegador] --> N[nginx<br/>React SPA]
+    B[Browser] --> N[nginx<br/>React SPA]
     N -->|/api| A[Spring Boot API]
     A --> DB[(PostgreSQL)]
 ```
 
 ```
 ├── backend/src/main/java/com/andresouza/finance
-│   ├── transaction/   # Entidade, consultas de agregação, serviço do dashboard e controller
-│   ├── user/          # Cadastro e login
-│   ├── security/      # JWT, CORS e Spring Security
+│   ├── transaction/   # Entity, aggregation queries, dashboard service and controller
+│   ├── user/          # Sign-up and login
+│   ├── security/      # JWT, CORS and Spring Security
 │   └── exception/     # Problem Details (RFC 9457)
 └── frontend/src
-    ├── api/           # Cliente HTTP com token e tratamento de erros
-    ├── auth/          # AuthContext e rotas protegidas
-    ├── components/    # Gráficos e formulário de lançamento
-    ├── pages/         # Login/cadastro e dashboard
-    └── utils/         # Formatação de moeda, datas e categorias
+    ├── api/           # HTTP client with token handling and error handling
+    ├── auth/          # AuthContext and protected routes
+    ├── components/    # Charts and entry form
+    ├── pages/         # Login/sign-up and dashboard
+    └── utils/         # Currency, date and category formatting
 ```
 
-## Como executar
+## Getting started
 
-### Com Docker
+### With Docker
 
 ```bash
 docker compose up --build
 ```
 
-- Aplicação: http://localhost:3000 (crie uma conta na tela de cadastro)
+- App: http://localhost:3000 (create an account on the sign-up screen)
 - API / Swagger: http://localhost:8080/swagger-ui.html
 
-### Em modo desenvolvimento
+### Development mode
 
 ```bash
 docker compose up -d postgres
-cd backend && ./mvnw spring-boot:run      # API na porta 8080
-cd frontend && npm install && npm run dev # Vite na porta 5173, com proxy para a API
+cd backend && ./mvnw spring-boot:run      # API on port 8080
+cd frontend && npm install && npm run dev # Vite on port 5173, proxying to the API
 ```
 
-## Testes
+## Tests
 
 ```bash
-cd backend && ./mvnw verify   # integração com PostgreSQL real (Testcontainers)
+cd backend && ./mvnw verify   # integration tests against real PostgreSQL (Testcontainers)
 cd frontend && npm test       # Vitest + Testing Library
 ```
 
-## Endpoints principais
+## Main endpoints
 
-| Método | Rota | Descrição |
+| Method | Route | Description |
 |---|---|---|
-| POST | `/api/auth/register` | Cadastro |
-| POST | `/api/auth/login` | Login (retorna JWT) |
-| GET | `/api/dashboard?month=2026-05` | Totais, despesas por categoria e últimos 6 meses |
-| GET | `/api/transactions?month=&type=&category=` | Lançamentos do mês |
-| POST | `/api/transactions` | Novo lançamento |
-| PUT | `/api/transactions/{id}` | Edita lançamento |
-| DELETE | `/api/transactions/{id}` | Exclui lançamento |
+| POST | `/api/auth/register` | Sign-up |
+| POST | `/api/auth/login` | Login (returns a JWT) |
+| GET | `/api/dashboard?month=2026-05` | Totals, expenses by category and the last 6 months |
+| GET | `/api/transactions?month=&type=&category=` | Entries for the month |
+| POST | `/api/transactions` | New entry |
+| PUT | `/api/transactions/{id}` | Updates an entry |
+| DELETE | `/api/transactions/{id}` | Deletes an entry |
 
 <details>
-<summary>Tela de login</summary>
+<summary>Login screen</summary>
 
 ![Login](docs/login.png)
 </details>
 
-## Autor
+## Author
 
-**André Souza** · Desenvolvedor Java Full Stack
+**André Souza** · Full Stack Java Developer
 [LinkedIn](https://www.linkedin.com/in/andre-souza-ti) · [GitHub](https://github.com/AndreSouzaTI)
